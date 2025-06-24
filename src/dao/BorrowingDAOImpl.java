@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import model.BorrowStatus;
 import model.Borrowing;
+import model.BorrowingDisplay;
+import model.BorrowingRecordDisplay;
 import util.DatabaseConnection;
 
 /**
@@ -25,9 +27,9 @@ public class BorrowingDAOImpl implements BorrowingDAO {
     @Override
     public List<Borrowing> getBorrowingsByStudentId(String studentId) throws Exception {
         List<Borrowing> result = new ArrayList<>();
-        String query = "SELECT * FROM borrowing WHERE StudentID = ? ORDER BY BorrowDate DESC";
+        String sql = "SELECT * FROM borrowing WHERE StudentID = ? ORDER BY BorrowDate DESC";
         try (Connection conn = DatabaseConnection.connect();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, studentId);
             ResultSet rs = stmt.executeQuery();
@@ -41,9 +43,9 @@ public class BorrowingDAOImpl implements BorrowingDAO {
     @Override
     public List<Borrowing> getActiveBorrowings(String studentId) throws Exception {
         List<Borrowing> result = new ArrayList<>();
-        String query = "SELECT * FROM borrowing WHERE StudentID = ? AND Status = 'BORROWED'";
+        String sql = "SELECT * FROM borrowing WHERE StudentID = ? AND Status = 'BORROWED'";
         try (Connection conn = DatabaseConnection.connect();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, studentId);
             ResultSet rs = stmt.executeQuery();
@@ -90,15 +92,14 @@ public class BorrowingDAOImpl implements BorrowingDAO {
 
     @Override
     public boolean returnBook(int borrowingId) throws Exception {
-        String query = "UPDATE borrowing SET Status = 'RETURNED' WHERE BorrowID = ?";
+        String query = "UPDATE borrowing SET Status = 'RETURNED', ReturnDate = ? WHERE BorrowID = ?";
         String getBookId = "SELECT BookID FROM borrowing WHERE BorrowID = ?";
-        String updateBook = "UPDATE books SET CopiesAvailable = CopiesAvailable + 1 WHERE BookID = ?";
 
         try (Connection conn = DatabaseConnection.connect();
                 PreparedStatement selectStmt = conn.prepareStatement(getBookId);
                 PreparedStatement updateStmt = conn.prepareStatement(query)) {
 
-            // Step 1: Get the book ID first
+            // Step 1: Get the BookID from the borrowing table
             selectStmt.setInt(1, borrowingId);
             ResultSet rs = selectStmt.executeQuery();
             int bookId = -1;
@@ -107,19 +108,17 @@ public class BorrowingDAOImpl implements BorrowingDAO {
             }
 
             if (bookId == -1) {
-                return false; // Book not found for this borrow ID
+                return false; // Book not found
             }
 
-            // Step 2: Update the borrowing status
-            updateStmt.setInt(1, borrowingId);
+            // Step 2: Update status + return date
+            updateStmt.setDate(1, new java.sql.Date(System.currentTimeMillis()));
+            updateStmt.setInt(2, borrowingId);
             int updated = updateStmt.executeUpdate();
 
-            // Step 3: Update the book's available count if status update succeeded
+            // Step 3: Update available copies in bookcopies
             if (updated > 0) {
-                try (PreparedStatement bookStmt = conn.prepareStatement(updateBook)) {
-                    bookStmt.setInt(1, bookId);
-                    return bookStmt.executeUpdate() > 0;
-                }
+                return true;
             }
         }
         return false;
@@ -130,7 +129,6 @@ public class BorrowingDAOImpl implements BorrowingDAO {
                 rs.getInt("BorrowID"),
                 rs.getString("StudentID"),
                 rs.getInt("BookID"),
-                rs.getString("CallNumber"),
                 rs.getDate("BorrowDate").toLocalDate(),
                 rs.getDate("DueDate").toLocalDate(),
                 BorrowStatus.valueOf(rs.getString("Status"))
@@ -154,6 +152,60 @@ public class BorrowingDAOImpl implements BorrowingDAO {
                 throw new Exception("No available copy found for ISBN: " + isbn);
             }
         }
+    }
+
+    @Override
+    public List<BorrowingDisplay> getActiveBorrowingDisplay(String studentId) throws Exception {
+        List<BorrowingDisplay> result = new ArrayList<>();
+        String sql = "SELECT br.DueDate, b.Title "
+                + "FROM borrowing br "
+                + "JOIN bookcopies bc ON br.BookID = bc.BookID "
+                + "JOIN books b ON bc.ISBN = b.ISBN "
+                + "WHERE br.StudentID = ? AND br.Status = 'BORROWED' "
+                + "ORDER BY br.BorrowDate DESC";
+
+        try (Connection conn = DatabaseConnection.connect();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, studentId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.add(new BorrowingDisplay(
+                        rs.getString("Title"),
+                        rs.getDate("DueDate").toLocalDate()
+                ));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<BorrowingRecordDisplay> getBorrowingRecordDisplayByStatus(String studentId, BorrowStatus status) throws Exception {
+        List<BorrowingRecordDisplay> result = new ArrayList<>();
+        String sql = "SELECT br.BorrowID, b.Title, br.BorrowDate, br.DueDate, br.ReturnDate "
+                + "FROM borrowing br "
+                + "JOIN bookcopies bc ON br.BookID = bc.BookID "
+                + "JOIN books b ON bc.ISBN = b.ISBN "
+                + "WHERE br.StudentID = ? AND br.Status = ? "
+                + "ORDER BY br.BorrowDate DESC";
+
+        try (Connection conn = DatabaseConnection.connect();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, studentId);
+            stmt.setString(2, status.name());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.add(new BorrowingRecordDisplay(
+                        rs.getInt("BorrowID"),
+                        rs.getString("Title"),
+                        rs.getDate("BorrowDate").toLocalDate(),
+                        rs.getDate("DueDate").toLocalDate(),
+                        rs.getDate("ReturnDate") != null ? rs.getDate("ReturnDate").toLocalDate() : null
+                ));
+            }
+        }
+        return result;
     }
 
 }

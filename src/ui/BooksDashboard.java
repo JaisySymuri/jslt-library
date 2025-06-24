@@ -99,7 +99,7 @@ public class BooksDashboard extends javax.swing.JFrame {
 
     private boolean isBookRowSelected() {
         if (jTable1.getSelectedRow() < 0) {
-            showMessage("No row selected.");
+            showMessage("No book selected.");
             return false;
         }
         return true;
@@ -393,8 +393,7 @@ public class BooksDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        // Clear all text fields
+        // TODO add your handling code here: Clear all text fields
         jTextField2.setText("");
         jTextField3.setText("");
         jTextField4.setText("");

@@ -6,7 +6,10 @@
 package dao;
 
 import java.util.List;
+import model.BorrowStatus;
 import model.Borrowing;
+import model.BorrowingDisplay;
+import model.BorrowingRecordDisplay;
 
 /**
  *
@@ -23,7 +26,11 @@ public interface BorrowingDAO {
     boolean borrowBook(Borrowing borrowing) throws Exception;
 
     boolean returnBook(int borrowingId) throws Exception;
-    
+
     int getAvailableBookCopy(String isbn) throws Exception;
+
+    List<BorrowingDisplay> getActiveBorrowingDisplay(String studentId) throws Exception;
+
+    List<BorrowingRecordDisplay> getBorrowingRecordDisplayByStatus(String studentId, BorrowStatus status) throws Exception;
 
 }

@@ -22,6 +22,16 @@ CREATE TABLE `students` (
   `PasswordHash` char(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `borrowing` (
+  `BorrowID` int(11) NOT NULL,
+  `StudentID` varchar(13) NOT NULL,
+  `BookID` int(11) NOT NULL,
+  `BorrowDate` date NOT NULL,
+  `DueDate` date NOT NULL,
+  `ReturnDate` date DEFAULT NULL,
+  `Status` enum('BORROWED','RETURNED','OVERDUE') NOT NULL DEFAULT 'BORROWED'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 ALTER TABLE `bookcopies`
   ADD PRIMARY KEY (`BookID`),
   ADD KEY `ISBN` (`ISBN`);
@@ -48,13 +58,13 @@ ALTER TABLE `students`
 ALTER TABLE `bookcopies`
   MODIFY `BookID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
---
--- Constraints for dumped tables
---
-
---
+ALTER TABLE `borrowing`
+  ADD PRIMARY KEY (`BorrowID`);
 -- Constraints for table `bookcopies`
 --
 ALTER TABLE `bookcopies`
   ADD CONSTRAINT `bookcopies_ibfk_1` FOREIGN KEY (`ISBN`) REFERENCES `books` (`ISBN`);
 COMMIT;
+
+ALTER TABLE `borrowing`
+  MODIFY `BorrowID` int(11) NOT NULL AUTO_INCREMENT,

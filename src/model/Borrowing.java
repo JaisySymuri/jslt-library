@@ -16,16 +16,14 @@ public class Borrowing {
     private int borrowingId;
     private String studentId;
     private int bookId;
-    private String callNumber;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private BorrowStatus status;
 
-    public Borrowing(int borrowingId, String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
+    public Borrowing(int borrowingId, String studentId, int bookId, LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
         this.borrowingId = borrowingId;
         this.studentId = studentId;
         this.bookId = bookId;
-        this.callNumber = callNumber;
         this.borrowDate = borrowDate;
         this.dueDate = dueDate;
         this.status  = status ;
@@ -35,10 +33,9 @@ public class Borrowing {
         
     }
 
-    public Borrowing(String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
+    public Borrowing(String studentId, int bookId,  LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
         this.studentId = studentId;
         this.bookId = bookId;
-        this.callNumber = callNumber;
         this.borrowDate = borrowDate;
         this.dueDate = dueDate;
         this.status  = status;
@@ -66,15 +63,8 @@ public class Borrowing {
 
     public void setBookId(int bookId) {
         this.bookId = bookId;
-    }
-    
-    public String getCallNumber() {
-        return callNumber;
-    }
+    } 
 
-    public void setCallNumber(String callNumber) {
-        this.callNumber = callNumber;
-    }
 
     public LocalDate getBorrowDate() {
         return borrowDate;
