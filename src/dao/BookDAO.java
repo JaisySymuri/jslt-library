@@ -135,4 +135,20 @@ public class BookDAO {
         return false;
     }
 
+    public int findAvailableBookId(String isbn) throws SQLException {
+        String sql = "SELECT c.BookID FROM bookcopies c "
+                + "LEFT JOIN borrowing br ON c.BookID = br.BookID AND br.Status = 'BORROWED' "
+                + "WHERE c.ISBN = ? AND br.BookID IS NULL LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.connect();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, isbn);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("BookID");
+            }
+        }
+        return -1;
+    }
+
 }

@@ -30,6 +30,10 @@ public class Borrowing {
         this.dueDate = dueDate;
         this.status  = status ;
     }
+    
+    public Borrowing() {
+        
+    }
 
     public Borrowing(String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
         this.studentId = studentId;
@@ -91,6 +95,10 @@ public class Borrowing {
     public BorrowStatus getStatus() {
         return status ;
     }
+    
+    public void setStatus(BorrowStatus status) {
+    this.status = status;
+}
 
     public void setReturned(BorrowStatus status) {
         this.status  = status;

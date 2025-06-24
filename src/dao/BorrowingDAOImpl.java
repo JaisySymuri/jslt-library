@@ -72,18 +72,17 @@ public class BorrowingDAOImpl implements BorrowingDAO {
 
     @Override
     public boolean borrowBook(Borrowing borrowing) throws Exception {
-        String query = "INSERT INTO borrowing (StudentID, BookID, CallNumber, BorrowDate, DueDate, Status) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO borrowing (StudentID, BookID, BorrowDate, DueDate, Status) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.connect();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, borrowing.getStudentId());
             stmt.setInt(2, borrowing.getBookId());
-            stmt.setString(3, borrowing.getCallNumber());
-            stmt.setDate(4, Date.valueOf(borrowing.getBorrowDate()));
-            stmt.setDate(5, Date.valueOf(borrowing.getDueDate()));
-            stmt.setString(6, borrowing.getStatus().name());
+            stmt.setDate(3, Date.valueOf(borrowing.getBorrowDate()));
+            stmt.setDate(4, Date.valueOf(borrowing.getDueDate()));
+            stmt.setString(5, borrowing.getStatus().name());
 
             return stmt.executeUpdate() > 0;
         }

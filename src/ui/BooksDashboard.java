@@ -6,6 +6,8 @@
 package ui;
 
 import dao.BookDAO;
+import dao.BorrowingDAO;
+import dao.BorrowingDAOImpl;
 import dao.criteria.BookSearchCriteria;
 import dto.BookSearchDTO;
 import java.sql.SQLException;
@@ -14,9 +16,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import model.Book;
 import model.BookAvailability;
+import service.BorrowBookService;
+import service.validation.ValidationResult;
 import util.BookSearchMapper;
+import util.Session;
 
 /**
  *
@@ -91,6 +95,57 @@ public class BooksDashboard extends javax.swing.JFrame {
         }
 
         jTable1.setModel(model);
+    }
+
+    private boolean isBookRowSelected() {
+        if (jTable1.getSelectedRow() < 0) {
+            showMessage("No row selected.");
+            return false;
+        }
+        return true;
+    }
+
+    private String getSelectedISBN() {
+        int selectedRow = jTable1.getSelectedRow();
+        return jTable1.getValueAt(selectedRow, 5).toString(); // Column 5 = ISBN
+    }
+
+    private String getStudentId() {
+        return Session.getCurrentStudentId();
+    }
+
+    private boolean confirmBorrow() {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to borrow this book?",
+                "Confirm Borrow",
+                JOptionPane.YES_NO_OPTION
+        );
+        return confirm == JOptionPane.YES_OPTION;
+    }
+
+    private void performBorrow(String studentId, String isbn) {
+        try {
+            BookDAO bookDAO = new BookDAO();
+            BorrowingDAO borrowingDAO = new BorrowingDAOImpl();
+            BorrowBookService borrowService = new BorrowBookService(bookDAO, borrowingDAO);
+
+            ValidationResult result = borrowService.borrow(studentId, isbn);
+            showMessage(result.getMessage());
+
+            if (result.isValid()) {
+                List<BookAvailability> updatedList = bookDAO.getAllBookAvailabilityFlags();
+                displayBookAvailabilityTable(updatedList);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showMessage("Unexpected error: " + e.getMessage());
+        }
+    }
+
+    private void showMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
     }
 
     /**
@@ -357,37 +412,23 @@ public class BooksDashboard extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here: Borrow button
-        int selectedRow = jTable1.getSelectedRow();
-        if (selectedRow >= 0) {
-            // Get the ISBN from column 3
-            String isbn = jTable1.getValueAt(selectedRow, 3).toString();
-
-            // Get today's date and the due date
-            LocalDate today = LocalDate.now();
-            LocalDate dueDate = today.plusDays(7);
-
-            // Format the dates nicely
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
-            String todayStr = today.format(formatter);
-            String dueDateStr = dueDate.format(formatter);
-
-            // Confirmation message
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Are you sure you want to borrow this book?\n"
-                    + "Due date: " + dueDateStr,
-                    "Confirm Borrow",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                // TODO: Borrow logic with selected ISBN goes here (call DAO)
-                JOptionPane.showMessageDialog(this, "Book borrowed successfully.\nDue on: " + dueDateStr);
-            }
-
-        } else {
-            JOptionPane.showMessageDialog(this, "No row selected.");
+        if (!isBookRowSelected()) {
+            return;
         }
+
+        String isbn = getSelectedISBN();
+        String studentId = getStudentId();
+
+        if (studentId.isEmpty()) {
+            studentId = "231011400253"; // Default fallback
+            showMessage("Student ID was empty. Using default: " + studentId);
+        }
+
+        if (!confirmBorrow()) {
+            return;
+        }
+
+        performBorrow(studentId, isbn);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

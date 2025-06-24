@@ -13,6 +13,11 @@ public class ValidationResult {
         return new ValidationResult(true, null);
     }
 
+    // ✅ Add this method
+    public static ValidationResult success(String message) {
+        return new ValidationResult(true, message);
+    }
+
     public static ValidationResult fail(String message) {
         return new ValidationResult(false, message);
     }

@@ -90,6 +90,9 @@ public class StudentDashboard extends javax.swing.JFrame {
     private String getConfirmPasswordInput() {
         return new String(jPasswordField3.getPassword()).trim();
     }
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
