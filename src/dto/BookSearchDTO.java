@@ -11,7 +11,6 @@ package dto;
  */
 public class BookSearchDTO {
 
-    private final String bookId;
     private final String title;
     private final String author;
     private final String publisher;
@@ -19,9 +18,8 @@ public class BookSearchDTO {
     private final String yearPublished;
     private final String callNumber;
 
-    public BookSearchDTO(String bookId, String title, String author, String publisher,
+    public BookSearchDTO(String title, String author, String publisher,
             String isbn, String yearPublished, String callNumber) {
-        this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
@@ -31,10 +29,6 @@ public class BookSearchDTO {
     }
 
     // Getters only
-    public String getBookId() {
-        return bookId;
-    }
-
     public String getTitle() {
         return title;
     }

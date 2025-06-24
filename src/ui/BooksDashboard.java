@@ -9,13 +9,13 @@ import dao.BookDAO;
 import dao.criteria.BookSearchCriteria;
 import dto.BookSearchDTO;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import model.Book;
+import model.BookAvailability;
 import util.BookSearchMapper;
 
 /**
@@ -29,11 +29,11 @@ public class BooksDashboard extends javax.swing.JFrame {
      */
     public BooksDashboard() {
         initComponents();
-        setupTableSelectionListener();
-    }
+        buttonGroup1.add(jRadioButton1); // AND
+        buttonGroup1.add(jRadioButton2);
 
-    private String getBookIdInput() {
-        return jTextField1.getText().trim();
+        jRadioButton2.setSelected(true);
+        loadAllBooks();
     }
 
     private String getTitleInput() {
@@ -60,37 +60,37 @@ public class BooksDashboard extends javax.swing.JFrame {
         return jTextField7.getText().trim();
     }
 
-    private void displayResultsInTable(List<Book> bookList) {
-        // Define the column names
-        String[] columnNames = {
-            "Book ID", "Title", "Author", "Publisher", "ISBN", "Year Published", "Call Number"
-        };
-
-        // Create table model
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-
-        // Add rows from book list
-        for (Book book : bookList) {
-            Object[] rowData = {
-                book.getBookId(),
-                book.getTitle(),
-                book.getAuthor(),
-                book.getPublisher(),
-                book.getIsbn(),
-                book.getYearPublished(),
-                book.getCallNumber()
-            };
-            model.addRow(rowData);
+    private void loadAllBooks() {
+        try {
+            List<BookAvailability> list = BookDAO.getAllBookAvailabilityFlags();
+            displayBookAvailabilityTable(list);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Failed to load books: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        // Set model to your table
-        jTable1.setModel(model);
     }
 
-    private void setupTableSelectionListener() {
-        jTable1.setRowSelectionAllowed(true);
-        jTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    private void displayBookAvailabilityTable(List<BookAvailability> list) {
+        String[] columnNames = {
+            "Available", "Title", "Author", "Publisher", "Year", "ISBN", "Call Number"
+        };
 
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        for (BookAvailability ba : list) {
+            Object[] row = {
+                ba.isAvailable() ? "Yes" : "No",
+                ba.getTitle(),
+                ba.getAuthor(),
+                ba.getPublisher(),
+                ba.getYearPublished(),
+                ba.getIsbn(),
+                ba.getCallNumber()
+            };
+            model.addRow(row);
+        }
+
+        jTable1.setModel(model);
     }
 
     /**
@@ -102,15 +102,14 @@ public class BooksDashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
@@ -129,8 +128,6 @@ public class BooksDashboard extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Book ID");
-
         jLabel2.setText("Title");
 
         jLabel3.setText("Author");
@@ -142,12 +139,6 @@ public class BooksDashboard extends javax.swing.JFrame {
         jLabel6.setText("Years Published");
 
         jLabel7.setText("Call Number");
-
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
 
         jRadioButton1.setText("AND");
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -188,7 +179,6 @@ public class BooksDashboard extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
@@ -197,7 +187,6 @@ public class BooksDashboard extends javax.swing.JFrame {
                             .addComponent(jLabel7))
                         .addGap(25, 25, 25)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1)
                             .addComponent(jTextField2)
                             .addComponent(jTextField3)
                             .addComponent(jTextField4)
@@ -221,11 +210,7 @@ public class BooksDashboard extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(42, 42, 42)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -251,7 +236,7 @@ public class BooksDashboard extends javax.swing.JFrame {
                     .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jRadioButton1)
@@ -281,7 +266,7 @@ public class BooksDashboard extends javax.swing.JFrame {
             }
         });
 
-        jLabel9.setText("Books");
+        jLabel9.setText("Books Searchs");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -289,28 +274,30 @@ public class BooksDashboard extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 887, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(29, 29, 29))
             .addGroup(layout.createSequentialGroup()
-                .addGap(376, 376, 376)
+                .addGap(566, 566, 566)
                 .addComponent(jLabel9)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(57, 57, 57)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(57, 57, 57)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
                 .addGap(32, 32, 32))
@@ -328,9 +315,8 @@ public class BooksDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here: The search Button
         BookSearchDTO dto = new BookSearchDTO(
-                getBookIdInput(),
                 getTitleInput(),
                 getAuthorInput(),
                 getPublisherInput(),
@@ -339,29 +325,21 @@ public class BooksDashboard extends javax.swing.JFrame {
                 getCallNumberInput()
         );
 
-        // Convert to search criteria
         BookSearchCriteria criteria = BookSearchMapper.fromDTO(dto);
-
-        // Get selected search mode (AND/OR)
-        boolean useAnd = jRadioButton1.isSelected();
+        boolean useAnd = jRadioButton1.isSelected(); // true if AND, false if OR
 
         try {
-            List<Book> results = BookDAO.searchBooks(criteria, useAnd);
-            displayResultsInTable(results); // custom JTable binding method
+            List<BookAvailability> results = BookDAO.searchBooks(criteria, useAnd);
+            displayBookAvailabilityTable(results);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Search failed: " + e.getMessage());
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         // Clear all text fields
-        jTextField1.setText("");
         jTextField2.setText("");
         jTextField3.setText("");
         jTextField4.setText("");
@@ -369,17 +347,44 @@ public class BooksDashboard extends javax.swing.JFrame {
         jTextField6.setText("");
         jTextField7.setText("");
 
-        // Clear radio button selection
-        jRadioButton1.setSelected(false);
-        jRadioButton2.setSelected(false);
+        // Clear radio button selection        
+        jRadioButton1.setSelected(false); // AND
+        jRadioButton2.setSelected(true);  // OR (default)
+
+        // Reload full book list
+        loadAllBooks();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here: Borrow button
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow >= 0) {
-            Object bookId = jTable1.getValueAt(selectedRow, 0); // Column 0 = Book ID
-            JOptionPane.showMessageDialog(this, "Selected Book ID: " + bookId);
+            // Get the ISBN from column 3
+            String isbn = jTable1.getValueAt(selectedRow, 3).toString();
+
+            // Get today's date and the due date
+            LocalDate today = LocalDate.now();
+            LocalDate dueDate = today.plusDays(7);
+
+            // Format the dates nicely
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+            String todayStr = today.format(formatter);
+            String dueDateStr = dueDate.format(formatter);
+
+            // Confirmation message
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to borrow this book?\n"
+                    + "Due date: " + dueDateStr,
+                    "Confirm Borrow",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                // TODO: Borrow logic with selected ISBN goes here (call DAO)
+                JOptionPane.showMessageDialog(this, "Book borrowed successfully.\nDue on: " + dueDateStr);
+            }
+
         } else {
             JOptionPane.showMessageDialog(this, "No row selected.");
         }
@@ -421,10 +426,10 @@ public class BooksDashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -438,7 +443,6 @@ public class BooksDashboard extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;

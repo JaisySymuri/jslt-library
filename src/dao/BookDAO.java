@@ -1,86 +1,138 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import dao.criteria.BookSearchCriteria;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import model.Book;
+import model.BookAvailability;
 import util.DatabaseConnection;
 
-/**
- *
- * @author bests
- */
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class BookDAO {
 
-    public static Book getBookById(int bookId) throws SQLException {
+    public static Book getBookByISBN(String isbn) throws SQLException {
+        String query = "SELECT * FROM books WHERE ISBN = ?";
         try (Connection conn = DatabaseConnection.connect();
-                PreparedStatement stmt = conn.prepareStatement("SELECT * FROM books WHERE BookID = ?")) {
-            stmt.setInt(1, bookId);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, isbn);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Book(
-                        rs.getInt("BookID"),
+                        rs.getString("ISBN"),
                         rs.getString("Title"),
                         rs.getString("Author"),
                         rs.getString("Publisher"),
-                        rs.getString("ISBN"),
                         rs.getInt("YearPublished"),
-                        rs.getInt("CopiesAvailable"),
                         rs.getString("CallNumber")
                 );
             }
         }
         return null;
     }
-    
-    public static List<Book> searchBooks(BookSearchCriteria criteria, boolean useAnd) throws SQLException {
-    List<Book> result = new ArrayList<>();
 
-    if (criteria == null || criteria.isEmpty()) return result;
+    public static List<BookAvailability> searchBooks(BookSearchCriteria criteria, boolean useAnd) throws SQLException {
+        List<BookAvailability> list = new ArrayList<>();
 
-    StringBuilder query = new StringBuilder("SELECT * FROM books WHERE ");
-    List<Object> values = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT "
+                + "CASE WHEN COUNT(c.BookID) - COUNT(br.BookID) > 0 THEN TRUE ELSE FALSE END AS IsAvailable, "
+                + "b.Title, b.Author, b.Publisher, b.YearPublished, b.ISBN, b.CallNumber "
+                + "FROM books b "
+                + "JOIN bookcopies c ON b.ISBN = c.ISBN "
+                + "LEFT JOIN borrowing br ON c.BookID = br.BookID AND br.ReturnDate IS NULL "
+        );
 
-    String joiner = useAnd ? " AND " : " OR ";
-    for (String column : criteria.getCriteria().keySet()) {
-        if (!values.isEmpty()) query.append(joiner);
-        query.append(column).append(" LIKE ?");
-        values.add("%" + criteria.getCriteria().get(column) + "%");
-    }
+        List<Object> values = new ArrayList<>();
 
-    try (Connection conn = DatabaseConnection.connect();
-         PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+        if (criteria != null && !criteria.isEmpty()) {
+            sql.append("WHERE ");
+            String joiner = useAnd ? " AND " : " OR ";
+            boolean first = true;
 
-        for (int i = 0; i < values.size(); i++) {
-            stmt.setObject(i + 1, values.get(i));
+            for (String column : criteria.getCriteria().keySet()) {
+                if (!first) {
+                    sql.append(joiner);
+                }
+                sql.append("b.").append(column).append(" LIKE ? ");
+                values.add("%" + criteria.getCriteria().get(column) + "%");
+                first = false;
+            }
         }
 
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) {
-            result.add(new Book(
-                rs.getInt("BookID"),
-                rs.getString("Title"),
-                rs.getString("Author"),
-                rs.getString("Publisher"),
-                rs.getString("ISBN"),
-                rs.getInt("YearPublished"),
-                rs.getInt("CopiesAvailable"),
-                rs.getString("CallNumber")
-            ));
+        sql.append("GROUP BY b.ISBN, b.Title, b.Author, b.Publisher, b.YearPublished, b.CallNumber");
+
+        try (Connection conn = DatabaseConnection.connect();
+                PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < values.size(); i++) {
+                stmt.setObject(i + 1, values.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(new BookAvailability(
+                        rs.getBoolean("IsAvailable"),
+                        rs.getString("Title"),
+                        rs.getString("Author"),
+                        rs.getString("Publisher"),
+                        rs.getInt("YearPublished"),
+                        rs.getString("ISBN"),
+                        rs.getString("CallNumber")
+                ));
+            }
         }
+
+        return list;
     }
 
-    return result;
-}
+    public static List<BookAvailability> getAllBookAvailabilityFlags() throws SQLException {
+        List<BookAvailability> list = new ArrayList<>();
 
+        String sql = "SELECT "
+                + "CASE WHEN COUNT(c.BookID) - COUNT(br.BookID) > 0 THEN TRUE ELSE FALSE END AS IsAvailable, "
+                + "b.Title, b.Author, b.Publisher, b.YearPublished, b.ISBN, b.CallNumber "
+                + "FROM books b "
+                + "JOIN bookcopies c ON b.ISBN = c.ISBN "
+                + "LEFT JOIN borrowing br ON c.BookID = br.BookID AND br.ReturnDate IS NULL "
+                + "GROUP BY b.ISBN, b.Title, b.Author, b.Publisher, b.YearPublished, b.CallNumber";
+
+        try (Connection conn = DatabaseConnection.connect();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                BookAvailability ba = new BookAvailability(
+                        rs.getBoolean("IsAvailable"),
+                        rs.getString("Title"),
+                        rs.getString("Author"),
+                        rs.getString("Publisher"),
+                        rs.getInt("YearPublished"),
+                        rs.getString("ISBN"),
+                        rs.getString("CallNumber")
+                );
+                list.add(ba);
+            }
+        }
+
+        return list;
+    }
+
+    public boolean isBookAvailable(String isbn) throws SQLException {
+        String sql = "SELECT COUNT(*) AS Available "
+                + "FROM bookcopies c "
+                + "LEFT JOIN borrowing br ON c.BookID = br.BookID AND br.ReturnDate IS NULL "
+                + "WHERE c.ISBN = ? AND br.BorrowID IS NULL";
+
+        try (Connection conn = DatabaseConnection.connect();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, isbn);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Available") > 0;
+            }
+        }
+        return false;
+    }
 
 }

@@ -18,26 +18,26 @@ public class Borrowing {
     private int bookId;
     private String callNumber;
     private LocalDate borrowDate;
-    private LocalDate returnDate;
-    private boolean returned;
+    private LocalDate dueDate;
+    private BorrowStatus status;
 
-    public Borrowing(int borrowingId, String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate returnDate, boolean returned) {
+    public Borrowing(int borrowingId, String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
         this.borrowingId = borrowingId;
         this.studentId = studentId;
         this.bookId = bookId;
         this.callNumber = callNumber;
         this.borrowDate = borrowDate;
-        this.returnDate = returnDate;
-        this.returned = returned;
+        this.dueDate = dueDate;
+        this.status  = status ;
     }
 
-    public Borrowing(String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate returnDate, boolean returned) {
+    public Borrowing(String studentId, int bookId, String callNumber, LocalDate borrowDate, LocalDate dueDate, BorrowStatus status) {
         this.studentId = studentId;
         this.bookId = bookId;
         this.callNumber = callNumber;
         this.borrowDate = borrowDate;
-        this.returnDate = returnDate;
-        this.returned = returned;
+        this.dueDate = dueDate;
+        this.status  = status;
     }
 
     public int getBorrowingId() {
@@ -80,19 +80,19 @@ public class Borrowing {
         this.borrowDate = borrowDate;
     }
 
-    public LocalDate getReturnDate() {
-        return returnDate;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public boolean isReturned() {
-        return returned;
+    public BorrowStatus getStatus() {
+        return status ;
     }
 
-    public void setReturned(boolean returned) {
-        this.returned = returned;
+    public void setReturned(BorrowStatus status) {
+        this.status  = status;
     }
 }

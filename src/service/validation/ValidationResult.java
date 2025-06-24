@@ -1,15 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package service.validation;
 
-/**
- *
- * @author bests
- */
 public class ValidationResult {
     private final boolean valid;
     private final String message;
@@ -17,6 +7,14 @@ public class ValidationResult {
     public ValidationResult(boolean valid, String message) {
         this.valid = valid;
         this.message = message;
+    }
+
+    public static ValidationResult success() {
+        return new ValidationResult(true, null);
+    }
+
+    public static ValidationResult fail(String message) {
+        return new ValidationResult(false, message);
     }
 
     public boolean isValid() {
@@ -27,4 +25,3 @@ public class ValidationResult {
         return message;
     }
 }
-

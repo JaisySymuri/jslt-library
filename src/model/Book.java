@@ -1,52 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package model;
 
 /**
  *
- * @author bests
+ * @author best
  */
 public class Book {
-    private int bookId;
+    private String isbn;
     private String title;
     private String author;
     private String publisher;
-    private String isbn;
     private int yearPublished;
-    private int copiesAvailable;
     private String callNumber;
 
-    public Book(int bookId, String title, String author, String publisher, String isbn, int yearPublished, int copiesAvailable, String callNumber) {
-        this.bookId = bookId;
+    public Book(String isbn, String title, String author, String publisher, int yearPublished, String callNumber) {
+        this.isbn = isbn;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
-        this.isbn = isbn;
         this.yearPublished = yearPublished;
-        this.copiesAvailable = copiesAvailable;
         this.callNumber = callNumber;
     }
 
-    public Book(String title, String author, String publisher, String isbn, int yearPublished, int copiesAvailable, String callNumber) {
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
+    public Book() {
+        // Default constructor
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
-        this.yearPublished = yearPublished;
-        this.copiesAvailable = copiesAvailable;
-        this.callNumber = callNumber;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
     }
 
     public String getTitle() {
@@ -73,14 +57,6 @@ public class Book {
         this.publisher = publisher;
     }
 
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
     public int getYearPublished() {
         return yearPublished;
     }
@@ -89,21 +65,11 @@ public class Book {
         this.yearPublished = yearPublished;
     }
 
-    public int getCopiesAvailable() {
-        return copiesAvailable;
-    }
-
-    public void setCopiesAvailable(int copiesAvailable) {
-        this.copiesAvailable = copiesAvailable;
-    }
-    
-     public String getCallNumber() {
+    public String getCallNumber() {
         return callNumber;
     }
 
     public void setCallNumber(String callNumber) {
         this.callNumber = callNumber;
     }
-    
 }
-

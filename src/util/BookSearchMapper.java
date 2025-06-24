@@ -17,7 +17,6 @@ public class BookSearchMapper {
     public static BookSearchCriteria fromDTO(BookSearchDTO dto) {
         BookSearchCriteria criteria = new BookSearchCriteria();
 
-        criteria.addCriteria("BookID", dto.getBookId());
         criteria.addCriteria("Title", dto.getTitle());
         criteria.addCriteria("Author", dto.getAuthor());
         criteria.addCriteria("Publisher", dto.getPublisher());
