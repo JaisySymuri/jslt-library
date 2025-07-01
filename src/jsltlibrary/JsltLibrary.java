@@ -17,9 +17,11 @@ public class JsltLibrary {
     /**
      * @param args the command line arguments
      */
+    
+//    Generate Hash password to be inserted in the db here
     public static void main(String[] args) {
         // TODO code application logic here
-        String plainPassword = "q1w2e3r4";
+        String plainPassword = "Lan2828";
         String inputHashed = HashUtil.hashPassword(plainPassword);
         System.out.println("Hashed password: " + inputHashed);
 
