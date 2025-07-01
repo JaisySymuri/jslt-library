@@ -3,16 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/BorrowingDisplay.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/validation/BookSearchValidator.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/ui/StudentDashboard.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/BookAvailability.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/controller/LoginResultHandler.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/BorrowStatus.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/result/LoginResult.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dao/BookDAO.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/controller/LoginController.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dao/BorrowingDAOImpl.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/validation/ChangePasswordValidator.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/ui/BooksDashboard.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dao/criteria/BookSearchCriteria.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/util/HashUtil.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/validation/BorrowingValidator.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/util/Session.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/BorrowingRecordDisplay.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/Borrowing.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/util/DatabaseConnection.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/Student.java</file>
@@ -21,11 +28,17 @@
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dao/jslt_library.sql</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/ui/Login.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/validation/ValidationResult.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dto/BookSearchDTO.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dao/StudentDAO.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dao/BorrowingDAO.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/ui/Dashboard.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/controller/ChangePasswordController.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/BorrowBookService.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dto/ChangePasswordDTO.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/ui/BorrowedBooksDashboard.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/model/Book.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/exeption/UserNotFoundException.java</file>
+            <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/dto/UpdateEmailDTO.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/jsltlibrary/JsltLibrary.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/service/validation/LoginValidator.java</file>
             <file>file:/C:/Users/bests/Documents/ACADEMIC/Sem%204/Pemrograman%201/jsltLibrary/src/util/BookSearchMapper.java</file>
